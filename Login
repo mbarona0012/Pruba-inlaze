@@ -1,0 +1,112 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
+
+public class TestSignUpScenarios {
+
+    public static void main(String[] args) {
+        // Configura el WebDriver (en este caso para Chrome)
+        System.setProperty("webdriver.chrome.driver", "C:/temp/WebDriver/chromedriver.exe");
+
+        // Configura las opciones del navegador (en este caso, para no mostrar la UI)
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // Ejecución en modo headless (sin interfaz gráfica)
+
+        // Inicia el navegador
+        WebDriver driver = new ChromeDriver(options);
+
+        // Abre la página web de registro
+        driver.get("https://test-qa.inlaze.com/auth/sign-up");
+
+        // Maximiza la ventana del navegador (opcional)
+        driver.manage().window().maximize();
+
+        // Escenario 1: Registro exitoso con datos válidos
+        signUpWithValidData(driver, "nombre", "apellido", "correo@example.com", "contraseña");
+
+        // Espera un momento para que la página responda (puedes usar explícitamente esperas también)
+        waitForPageLoaded(driver);
+
+        // Verificar que se haya registrado correctamente
+        verifySuccessfulSignUp(driver);
+
+        // Cerrar sesión para preparar para el siguiente escenario
+        logout(driver);
+
+        // Escenario 2: Intento de registro con correo electrónico ya existente
+        signUpWithExistingEmail(driver, "nombre", "apellido", "correo@example.com", "contraseña");
+
+        // Espera un momento para que la página responda (puedes usar explícitamente esperas también)
+        waitForPageLoaded(driver);
+
+        // Verificar que se muestre un mensaje de error por correo electrónico duplicado
+        verifyDuplicateEmailError(driver);
+
+        // Cierra el navegador al finalizar todos los escenarios
+        driver.quit();
+    }
+
+    private static void signUpWithValidData(WebDriver driver, String firstName, String confirm_pasword, String email, String password) {
+        WebElement firstNameField = driver.findElement(By.xpath("//*[@id="full-name"]"));
+        WebElement emailField = driver.findElement(By.id("email"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement confirmpasswordField = driver.findElement(By.id("confirm-password"));
+        WebElement signUpButton = driver.findElement(By.cssSelector("button[type='submit']"));
+
+        firstNameField.sendKeys(firstName);
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        confirmpasswordField.sendKeys(confirm_Password)
+
+        signUpButton.click();
+    }
+
+    private static void signUpWithExistingEmail(WebDriver driver, String firstName, String confirm_pasword, String email, String password) {
+        WebElement firstNameField = driver.findElement(By.xpath("//*[@id="full-name"]"));
+        WebElement emailField = driver.findElement(By.id("email"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement confirmpasswordField = driver.findElement(By.id("confirm-password"));
+        WebElement signUpButton = driver.findElement(By.cssSelector("button[type='submit']"));
+
+        firstNameField.sendKeys(firstName);
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        confirmpasswordField.sendKeys(confirm_Password)
+
+        signUpButton.click();
+    }
+
+    private static void verifySuccessfulSignUp(WebDriver driver) {
+        // Verifica que se haya registrado correctamente
+        // Por ejemplo, podrías verificar que se haya redirigido a una página de éxito o a un panel de usuario
+        // En este caso, verificaré que se muestre un mensaje de bienvenida después del registro exitoso
+        WebElement welcomeMessageElement = driver.findElement(By.xpath("//h2[contains(text(), 'Welcome')]"));
+        String welcomeMessage = welcomeMessageElement.getText();
+        System.out.println("Registro exitoso. Mensaje de bienvenida: " + welcomeMessage);
+    }
+
+    private static void verifyDuplicateEmailError(WebDriver driver) {
+        // Verifica que se muestre un mensaje de error por correo electrónico duplicado
+        WebElement errorMessageElement = driver.findElement(By.xpath("//div[contains(@class, 'error-message')]"));
+        String errorMessage = errorMessageElement.getText();
+        System.out.println("Mensaje de error al intentar registrar con correo electrónico duplicado: " + errorMessage);
+    }
+
+    private static void logout(WebDriver driver) {
+        // Implementa el código para cerrar sesión si es necesario
+        // Por ejemplo, hacer clic en un botón de cerrar sesión y esperar a que la página se cargue
+        // Este método depende de la implementación específica de tu aplicación
+    }
+
+    private static void waitForPageLoaded(WebDriver driver) {
+        // Espera a que la página se cargue completamente
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.jsReturnsValue("return document.readyState=='complete'"));
+    }
+}
