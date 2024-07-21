@@ -1,0 +1,89 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.concurrent.TimeUnit;
+
+public class TestSignUpScenarios {
+
+    public static void main(String[] args) {
+
+        System.setProperty("webdriver.chrome.driver", "C:/temp/WebDriver/chromedriver.exe");
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless"); // Ejecución en modo headless (sin interfaz gráfica)
+
+        WebDriver driver = new ChromeDriver(options);
+
+
+        driver.get("https://test-qa.inlaze.com/auth/sign-up");
+
+
+        driver.manage().window().maximize();
+
+        //Registro exitoso
+        VunculacionExitosa(driver, "nombre", "apellido", "correo@example.com", "contraseña");
+
+        waitForPageLoaded(driver);
+
+        verifySuccessfulSignUp(driver);
+
+        logout(driver);
+
+        // Intento de registro con correo electrónico ya existente
+        VunculacionFallida(driver, "nombre", "apellido", "correo@example.com", "contraseña");
+
+        waitForPageLoaded(driver);
+
+        verifyDuplicateEmailError(driver);
+
+        driver.quit();
+    }
+
+    private static void VunculacionExitosa(WebDriver driver, String firstName, String confirm_pasword, String email, String password) {
+        WebElement firstNameField = driver.findElement(By.xpath("//*[@id="full-name"]"));
+        WebElement emailField = driver.findElement(By.id("email"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement confirmpasswordField = driver.findElement(By.id("confirm-password"));
+        WebElement signUpButton = driver.findElement(By.cssSelector("button[type='submit']"));
+
+        firstNameField.sendKeys(firstName);
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        confirmpasswordField.sendKeys(confirm_Password)
+
+        signUpButton.click();
+    }
+
+    private static void VunculacionFallida(WebDriver driver, String firstName, String confirm_pasword, String email, String password) {
+        WebElement firstNameField = driver.findElement(By.xpath("//*[@id="full-name"]"));
+        WebElement emailField = driver.findElement(By.id("email"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement confirmpasswordField = driver.findElement(By.id("confirm-password"));
+        WebElement signUpButton = driver.findElement(By.cssSelector("button[type='submit']"));
+
+        firstNameField.sendKeys(firstName);
+        emailField.sendKeys(email);
+        passwordField.sendKeys(password);
+        confirmpasswordField.sendKeys(confirm_Password)
+
+        signUpButton.click();
+    }
+
+
+    private static void logout(WebDriver driver) {
+        // Implementa el código para cerrar sesión si es necesario
+        // Por ejemplo, hacer clic en un botón de cerrar sesión y esperar a que la página se cargue
+        // Este método depende de la implementación específica de tu aplicación
+    }
+
+    private static void waitForPageLoaded(WebDriver driver) {
+        // Espera a que la página se cargue completamente
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        wait.until(ExpectedConditions.jsReturnsValue("return document.readyState=='complete'"));
+    }
+}
